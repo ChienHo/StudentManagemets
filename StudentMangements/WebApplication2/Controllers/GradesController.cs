@@ -1,4 +1,5 @@
 ﻿using StudentManagemet.Core.Models;
+using StudentManagemet.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,26 +11,56 @@ namespace WebApplication2.Controllers
 {
     public class GradesController : Controller
     {
-        StudentContext context = new StudentContext();
+        IGradeRepository gradeRepository;
+        public GradesController()
+        {
+            gradeRepository = new GradeRepository();
+        }
         // GET: Grades
         public ActionResult Index()
         {
-            return View(context.Grades.ToList());
+            return View(gradeRepository.GetAllGrade());
         }
-        // GET: Students/Details/5
+        public PartialViewResult GetAllGrade()
+        {
+            return PartialView("_menuPartial", gradeRepository.GetAllGrade());
+        }
+        // GET: Grade/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Grade grade = context.Grades.Find(id);
+            Grade grade = gradeRepository.GetById(id);
             if (grade == null)
             {
                 return HttpNotFound();
             }
             return View(grade);
         }
-
+        //Add grade
+        /// <summary>
+        /// Get method to Create Grade
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Create()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include ="GradeName")] Grade grade)
+        {
+            if(ModelState.IsValid)
+            {
+                gradeRepository.AddGrade(grade);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View(grade);
+            }
+        }
     }
 }

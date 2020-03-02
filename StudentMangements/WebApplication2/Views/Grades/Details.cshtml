@@ -1,4 +1,4 @@
-﻿@model StudentManagemet.Core.Models.Grade
+﻿@model Grade
 
 @{
     ViewBag.Title = "Details";
@@ -9,9 +9,9 @@
 <div>
     <h4>Grade</h4>
     <hr />
-  
-           GradeName: @Model.GradeName
-   
+
+    @Html.DisplayNameFor(model => model.GradeName): @Html.DisplayFor(model => model.GradeName)
+
     </dl>
 </div>
 
