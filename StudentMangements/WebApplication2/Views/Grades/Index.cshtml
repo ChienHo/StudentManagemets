@@ -1,0 +1,13 @@
+﻿@model IEnumerable<StudentManagemet.Core.Models.Grade>
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>List of Grade</h2>
+
+@foreach (var item in Model)
+{
+    <p> grade name: @item.GradeName</p>
+    @Html.ActionLink("Details", "Details", new { id = item.GradeId })
+    <hr />
+}

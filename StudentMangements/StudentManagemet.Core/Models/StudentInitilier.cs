@@ -7,7 +7,7 @@ namespace StudentManagemet.Core.Models
     {
         protected override void Seed(StudentContext context)
         {
-            List<Grade> Grade = new List<Grade>
+            List<Grade> grade = new List<Grade>
             {
                 new Grade
                 {
@@ -33,6 +33,9 @@ namespace StudentManagemet.Core.Models
                     StudentName = "name 2"
                 }
             };
+            context.Grades.AddRange(grade);
+            context.Students.AddRange(student);
+            context.SaveChanges();
             base.Seed(context);
         }
     }
