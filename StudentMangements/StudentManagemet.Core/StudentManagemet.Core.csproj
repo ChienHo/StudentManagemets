@@ -58,6 +58,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\GradeRepository.cs" />
     <Compile Include="Repositories\IGradeRepository.cs" />
+    <Compile Include="Repositories\IStudentRepositories.cs" />
+    <Compile Include="Repositories\StudentRepositories.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

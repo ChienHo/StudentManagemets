@@ -23,13 +23,13 @@ namespace StudentManagemet.Core.Models
                 new Student
                 {
                     StudentAge = 12,
-                    StudentId = 1,
+                    GradeId = 1,
                     StudentName = "name 1"
                 },
                   new Student
                 {
                     StudentAge = 12,
-                    StudentId = 1,
+                    GradeId = 1,
                     StudentName = "name 2"
                 }
             };

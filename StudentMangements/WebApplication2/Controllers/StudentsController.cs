@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
+﻿using System.Net;
 using System.Web.Mvc;
 using StudentManagemet.Core.Models;
+using StudentManagemet.Core.Repositories;
 
 namespace WebApplication2.Controllers
 {
     public class StudentsController : Controller
     {
-        private StudentContext db = new StudentContext();
-
+        protected readonly IGradeRepository gradeRepo;
+        protected readonly IStudentRepositories studentRepo;
+        public StudentsController()
+        {
+            gradeRepo = new GradeRepository();
+            studentRepo = new StudentRepositories();
+        }
         // GET: Students
         public ActionResult Index()
         {
-            return View(db.Students.ToList());
+            return View(studentRepo.GetAllStudent());
         }
 
         // GET: Students/Details/5
@@ -27,7 +27,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Student student = db.Students.Find(id);
+            Student student = studentRepo.GetStudentById(id);
             if (student == null)
             {
                 return HttpNotFound();
@@ -38,6 +38,7 @@ namespace WebApplication2.Controllers
         // GET: Students/Create
         public ActionResult Create()
         {
+            ViewBag.GradeId = new SelectList(gradeRepo.GetAllGrade(), "GradeId", "GradeName");
             return View();
         }
 
@@ -46,15 +47,15 @@ namespace WebApplication2.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "StudentId,StudentName,StudentAge")] Student student)
+        public ActionResult Create([Bind(Include = "StudentId,StudentName,StudentAge,GradeId")] Student student)
         {
             if (ModelState.IsValid)
             {
-                db.Students.Add(student);
-                db.SaveChanges();
+                studentRepo.AddStudent(student);
                 return RedirectToAction("Index");
             }
 
+            ViewBag.GradeId = new SelectList(gradeRepo.GetAllGrade(), "GradeId", "GradeName", student.GradeId);
             return View(student);
         }
 
@@ -65,11 +66,12 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Student student = db.Students.Find(id);
+            Student student = studentRepo.GetStudentById(id);
             if (student == null)
             {
                 return HttpNotFound();
             }
+            ViewBag.GradeId = new SelectList(gradeRepo.GetAllGrade(), "GradeId", "GradeName", student.GradeId);
             return View(student);
         }
 
@@ -78,14 +80,14 @@ namespace WebApplication2.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "StudentId,StudentName,StudentAge")] Student student)
+        public ActionResult Edit([Bind(Include = "StudentId,StudentName,StudentAge,GradeId")] Student student)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(student).State = EntityState.Modified;
-                db.SaveChanges();
+                studentRepo.UpdateStudent(student);
                 return RedirectToAction("Index");
             }
+            ViewBag.GradeId = new SelectList(studentRepo.GetAllStudent(), "GradeId", "GradeName", student.GradeId);
             return View(student);
         }
 
@@ -96,7 +98,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Student student = db.Students.Find(id);
+            Student student = studentRepo.GetStudentById(id);
             if (student == null)
             {
                 return HttpNotFound();
@@ -109,9 +111,8 @@ namespace WebApplication2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Student student = db.Students.Find(id);
-            db.Students.Remove(student);
-            db.SaveChanges();
+            Student student = studentRepo.GetStudentById(id);
+            studentRepo.RemoveStudent(student);
             return RedirectToAction("Index");
         }
 
@@ -119,7 +120,7 @@ namespace WebApplication2.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                studentRepo.Dispose();
             }
             base.Dispose(disposing);
         }

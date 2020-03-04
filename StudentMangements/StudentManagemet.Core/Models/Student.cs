@@ -11,6 +11,7 @@ namespace StudentManagemet.Core.Models
         public int StudentId { get; set; }
         public string StudentName { get; set; }
         public int StudentAge { get; set; }
-        public Grade Grade { get; set; }
+        public int GradeId { get; set; }
+        public virtual Grade Grade { get; set; }
     }
 }
